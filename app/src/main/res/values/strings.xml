@@ -300,7 +300,9 @@
     <string name="call_stats_jitter_buffer">Jitter buffer:</string>
     <string name="call_stats_encoder_name">Encoder:</string>
     <string name="call_stats_decoder_name">Decoder:</string>
+    <string name="call_stats_player_filter">Player filter:</string>
     <string name="call_stats_display_filter">Display filter:</string>
+    <string name="call_stats_capture_filter">Capture filter:</string>
     <string name="call">Call</string>
     <string name="call_log_delete_dialog">Do you want to delete the selected call logs?</string>
 
@@ -386,6 +388,9 @@
     <string name="pref_tunnel_title">Tunnel</string>
     <string name="pref_tunnel_host">Hostname</string>
     <string name="pref_tunnel_port">Port</string>
+    <string name="pref_tunnel_dual_mode">Enable dual mode</string>
+    <string name="pref_tunnel_host_2">Hostname (2nd server for dual mode)</string>
+    <string name="pref_tunnel_port_2">Port (2nd server for dual mode)</string>
     <string name="pref_tunnel_mode">Mode</string>
     <!--do not change order without changing corresponding entry_values in non_localizable_strings.xml-->
     <string-array name="tunnel_mode_entries">
@@ -467,6 +472,9 @@
     <string name="pref_auto_download_disabled">Never</string>
     <string name="pref_auto_download_always">Always</string>
     <string name="pref_auto_download_under_size">If lighter than max size</string>
+    <string name="pref_android_app_hide_empty_chat_rooms_title">Hide empty chat rooms</string>
+    <string name="pref_android_app_hide_chat_rooms_from_removed_proxies_title">Hide chat rooms from removed proxy configs</string>
+    <string name="pref_android_app_hide_chat_rooms_from_removed_proxies_desc">If you have missing chat rooms, try to uncheck this setting</string>
 
     <!-- Network settings -->
     <string name="pref_network_title">Network</string>

@@ -30,8 +30,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import org.linphone.LinphoneContext;
 import org.linphone.LinphoneManager;
-import org.linphone.LinphoneService;
 import org.linphone.R;
 import org.linphone.compatibility.Compatibility;
 import org.linphone.core.Address;
@@ -142,15 +142,15 @@ public class LinphonePreferences {
     }
 
     private String getString(int key) {
-        if (mContext == null && LinphoneService.isReady()) {
-            mContext = LinphoneService.instance();
+        if (mContext == null && LinphoneContext.isReady()) {
+            mContext = LinphoneContext.instance().getApplicationContext();
         }
 
         return mContext.getString(key);
     }
 
     private Core getLc() {
-        if (!LinphoneService.isReady()) return null;
+        if (!LinphoneContext.isReady()) return null;
 
         return LinphoneManager.getCore();
     }
@@ -161,7 +161,7 @@ public class LinphonePreferences {
             return core.getConfig();
         }
 
-        if (!LinphoneService.isReady()) {
+        if (!LinphoneContext.isReady()) {
             File linphonerc = new File(mBasePath + "/.linphonerc");
             if (linphonerc.exists()) {
                 return Factory.instance().createConfig(linphonerc.getAbsolutePath());
@@ -592,7 +592,7 @@ public class LinphonePreferences {
         if (getLc() == null) return;
         NatPolicy nat = getOrCreateNatPolicy();
         nat.enableIce(enabled);
-        nat.enableStun(enabled);
+        if (enabled) nat.enableStun(true);
         getLc().setNatPolicy(nat);
     }
 
@@ -900,6 +900,53 @@ public class LinphonePreferences {
         }
     }
 
+    public String getTunnelHost2() {
+        TunnelConfig config = getTunnelConfig();
+        if (config != null) {
+            return config.getHost2();
+        } else {
+            return null;
+        }
+    }
+
+    public void setTunnelHost2(String host) {
+        TunnelConfig config = getTunnelConfig();
+        if (config != null) {
+            config.setHost2(host);
+            LinphoneManager.getInstance().initTunnelFromConf();
+        }
+    }
+
+    public int getTunnelPort2() {
+        TunnelConfig config = getTunnelConfig();
+        if (config != null) {
+            return config.getPort2();
+        } else {
+            return -1;
+        }
+    }
+
+    public void setTunnelPort2(int port) {
+        TunnelConfig config = getTunnelConfig();
+        if (config != null) {
+            config.setPort2(port);
+            LinphoneManager.getInstance().initTunnelFromConf();
+        }
+    }
+
+    public void enableTunnelDualMode(boolean enable) {
+        LinphoneManager.getInstance().initTunnelFromConf();
+        getLc().getTunnel().enableDualMode(enable);
+    }
+
+    public boolean isTunnelDualModeEnabled() {
+        Tunnel tunnel = getLc().getTunnel();
+        if (tunnel != null) {
+            return tunnel.dualModeEnabled();
+        }
+        return false;
+    }
+
     public String getTunnelMode() {
         return getConfig().getString("app", "tunnel", null);
     }
@@ -1179,5 +1226,21 @@ public class LinphonePreferences {
 
     public void enableChatRoomsShortcuts(boolean enable) {
         getConfig().setBool("app", "shortcuts", enable);
+    }
+
+    public boolean hideEmptyChatRooms() {
+        return getConfig().getBool("misc", "hide_empty_chat_rooms", true);
+    }
+
+    public void setHideEmptyChatRooms(boolean hide) {
+        getConfig().setBool("misc", "hide_empty_chat_rooms", hide);
+    }
+
+    public boolean hideRemovedProxiesChatRooms() {
+        return getConfig().getBool("misc", "hide_chat_rooms_from_removed_proxies", true);
+    }
+
+    public void setHideRemovedProxiesChatRooms(boolean hide) {
+        getConfig().setBool("misc", "hide_chat_rooms_from_removed_proxies", hide);
     }
 }

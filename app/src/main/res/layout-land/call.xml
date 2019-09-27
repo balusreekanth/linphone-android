@@ -20,10 +20,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
 
-            <TextureView
+            <org.linphone.mediastream.video.capture.CaptureTextureView
                 android:id="@+id/local_preview_texture"
-                android:layout_width="wrap_content"
-                android:layout_height="100dp"
+                android:layout_width="200dp"
+                android:layout_height="200dp"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentBottom="true" />
 
@@ -150,7 +150,7 @@
             android:layout_height="match_parent"
             android:layout_gravity="left"
             android:layout_marginTop="40dp"
-            android:background="@color/white_color">
+            android:background="?attr/backgroundColor">
 
             <fragment
                 android:id="@+id/call_stats_fragment"

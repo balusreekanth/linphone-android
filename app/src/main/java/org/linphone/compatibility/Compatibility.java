@@ -73,14 +73,6 @@ public class Compatibility {
         return ApiTwentyOnePlus.createSimpleNotification(context, title, text, intent);
     }
 
-    public static Notification createMissedCallNotification(
-            Context context, String title, String text, PendingIntent intent) {
-        if (Version.sdkAboveOrEqual(Version.API26_O_80)) {
-            return ApiTwentySixPlus.createMissedCallNotification(context, title, text, intent);
-        }
-        return ApiTwentyOnePlus.createMissedCallNotification(context, title, text, intent);
-    }
-
     public static Notification createMessageNotification(
             Context context,
             Notifiable notif,
@@ -109,10 +101,17 @@ public class Compatibility {
         return null;
     }
 
+    public static Notification createMissedCallNotification(
+            Context context, String title, String text, PendingIntent intent) {
+        if (Version.sdkAboveOrEqual(Version.API26_O_80)) {
+            return ApiTwentySixPlus.createMissedCallNotification(context, title, text, intent);
+        }
+        return ApiTwentyOnePlus.createMissedCallNotification(context, title, text, intent);
+    }
+
     public static Notification createInCallNotification(
             Context context,
             int callId,
-            boolean showAnswerAction,
             String msg,
             int iconID,
             Bitmap contactIcon,
@@ -120,27 +119,31 @@ public class Compatibility {
             PendingIntent intent) {
         if (Version.sdkAboveOrEqual(Version.API26_O_80)) {
             return ApiTwentySixPlus.createInCallNotification(
-                    context,
-                    callId,
-                    showAnswerAction,
-                    msg,
-                    iconID,
-                    contactIcon,
-                    contactName,
-                    intent);
+                    context, callId, msg, iconID, contactIcon, contactName, intent);
         } else if (Version.sdkAboveOrEqual(Version.API24_NOUGAT_70)) {
             return ApiTwentyFourPlus.createInCallNotification(
-                    context,
-                    callId,
-                    showAnswerAction,
-                    msg,
-                    iconID,
-                    contactIcon,
-                    contactName,
-                    intent);
+                    context, callId, msg, iconID, contactIcon, contactName, intent);
         }
         return ApiTwentyOnePlus.createInCallNotification(
                 context, msg, iconID, contactIcon, contactName, intent);
+    }
+
+    public static Notification createIncomingCallNotification(
+            Context context,
+            int callId,
+            Bitmap contactIcon,
+            String contactName,
+            String sipUri,
+            PendingIntent intent) {
+        if (Version.sdkAboveOrEqual(Version.API26_O_80)) {
+            return ApiTwentySixPlus.createIncomingCallNotification(
+                    context, callId, contactIcon, contactName, sipUri, intent);
+        } else if (Version.sdkAboveOrEqual(Version.API24_NOUGAT_70)) {
+            return ApiTwentyFourPlus.createIncomingCallNotification(
+                    context, callId, contactIcon, contactName, sipUri, intent);
+        }
+        return ApiTwentyOnePlus.createIncomingCallNotification(
+                context, contactIcon, contactName, sipUri, intent);
     }
 
     public static Notification createNotification(
@@ -262,5 +265,46 @@ public class Compatibility {
         if (Version.sdkAboveOrEqual(Version.API26_O_80)) {
             ApiTwentySixPlus.enterPipMode(activity);
         }
+    }
+
+    public static Notification.Action getReplyMessageAction(Context context, Notifiable notif) {
+        if (Version.sdkAboveOrEqual(Version.API29_ANDROID_10)) {
+            return ApiTwentyNinePlus.getReplyMessageAction(context, notif);
+        } else if (Version.sdkAboveOrEqual(Version.API28_PIE_90)) {
+            return ApiTwentyEightPlus.getReplyMessageAction(context, notif);
+        } else if (Version.sdkAboveOrEqual(Version.API24_NOUGAT_70)) {
+            return ApiTwentyFourPlus.getReplyMessageAction(context, notif);
+        }
+        return null;
+    }
+
+    public static Notification.Action getMarkMessageAsReadAction(
+            Context context, Notifiable notif) {
+        if (Version.sdkAboveOrEqual(Version.API29_ANDROID_10)) {
+            return ApiTwentyNinePlus.getMarkMessageAsReadAction(context, notif);
+        } else if (Version.sdkAboveOrEqual(Version.API28_PIE_90)) {
+            return ApiTwentyEightPlus.getMarkMessageAsReadAction(context, notif);
+        } else if (Version.sdkAboveOrEqual(Version.API24_NOUGAT_70)) {
+            return ApiTwentyFourPlus.getMarkMessageAsReadAction(context, notif);
+        }
+        return null;
+    }
+
+    public static Notification.Action getCallAnswerAction(Context context, int callId) {
+        if (Version.sdkAboveOrEqual(Version.API29_ANDROID_10)) {
+            return ApiTwentyNinePlus.getCallAnswerAction(context, callId);
+        } else if (Version.sdkAboveOrEqual(Version.API24_NOUGAT_70)) {
+            return ApiTwentyFourPlus.getCallAnswerAction(context, callId);
+        }
+        return null;
+    }
+
+    public static Notification.Action getCallDeclineAction(Context context, int callId) {
+        if (Version.sdkAboveOrEqual(Version.API29_ANDROID_10)) {
+            return ApiTwentyNinePlus.getCallDeclineAction(context, callId);
+        } else if (Version.sdkAboveOrEqual(Version.API24_NOUGAT_70)) {
+            return ApiTwentyFourPlus.getCallDeclineAction(context, callId);
+        }
+        return null;
     }
 }

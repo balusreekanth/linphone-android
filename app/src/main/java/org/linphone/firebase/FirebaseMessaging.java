@@ -19,19 +19,37 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-import static android.content.Intent.ACTION_MAIN;
-
-import android.content.Intent;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
+import org.linphone.LinphoneContext;
 import org.linphone.LinphoneManager;
-import org.linphone.LinphoneService;
 import org.linphone.core.Core;
 import org.linphone.core.tools.Log;
 import org.linphone.settings.LinphonePreferences;
 import org.linphone.utils.LinphoneUtils;
 
 public class FirebaseMessaging extends FirebaseMessagingService {
+    private Runnable mPushReceivedRunnable =
+            new Runnable() {
+                @Override
+                public void run() {
+                    if (!LinphoneContext.isReady()) {
+                        android.util.Log.i(
+                                "FirebaseMessaging", "[Push Notification] Starting context");
+                        new LinphoneContext(getApplicationContext());
+                        LinphoneContext.instance().start(false);
+                    } else {
+                        Log.i("[Push Notification] Notifying Core");
+                        if (LinphoneManager.getInstance() != null) {
+                            Core core = LinphoneManager.getCore();
+                            if (core != null) {
+                                core.ensureRegistered();
+                            }
+                        }
+                    }
+                }
+            };
+
     public FirebaseMessaging() {}
 
     @Override
@@ -50,21 +68,6 @@ public class FirebaseMessaging extends FirebaseMessagingService {
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
         android.util.Log.i("FirebaseMessaging", "[Push Notification] Received");
-
-        if (!LinphoneService.isReady()) {
-            android.util.Log.i("FirebaseMessaging", "[Push Notification] Starting Service");
-            Intent intent = new Intent(ACTION_MAIN);
-            intent.setClass(this, LinphoneService.class);
-            intent.putExtra("PushNotification", true);
-            startService(intent);
-        } else {
-            Log.i("[Push Notification] Notifying Core");
-            if (LinphoneManager.getInstance() != null) {
-                Core core = LinphoneManager.getCore();
-                if (core != null) {
-                    core.ensureRegistered();
-                }
-            }
-        }
+        LinphoneUtils.dispatchOnUIThread(mPushReceivedRunnable);
     }
 }
